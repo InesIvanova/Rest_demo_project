@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
-from .models import Question
-from .serializers import QuestionSerializer
+from .models import Question, Profile
+from .serializers import QuestionSerializer, ProfileSerializer
 
 
 # Create your views here.
@@ -26,6 +26,8 @@ class QuestionsList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    permission_classes = (permissions.,)
+
 
 class QuestionDetails(APIView):
 
@@ -36,7 +38,7 @@ class QuestionDetails(APIView):
         except Question.DoesNotExist:
             raise Http404
 
-    def get(self, request, question_id, answer_id):
+    def get(self, request, question_id):
         question = self.get_object(pk=question_id)
         serializer = QuestionSerializer(question)
         return Response(serializer.data)
@@ -55,3 +57,10 @@ class QuestionDetails(APIView):
         question.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class UserList(APIView):
+
+    def get(self, request):
+        profiles = Profile.objects.all()
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
