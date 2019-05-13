@@ -10,7 +10,7 @@ class Profile(models.Model):
 
 class Question(models.Model):
     author = models.CharField(max_length=200, default='Anonymous')
-    question = models.TextField()
+    question = models.TextField(default='no content')
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True, related_name='questions')
 
     def __str__(self):
